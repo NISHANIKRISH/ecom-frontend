@@ -8,8 +8,12 @@ const App = () => {
     FullName: "",
     email: "",
     password: "",
-    ConfirmPassword:""
+    ConfirmPassword:"",
   });
+  const [status, setStatus] = useState(null);
+  const [resp, setResponse] = useState(null);
+  const [err, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const inputs = [
     {
@@ -58,8 +62,12 @@ const App = () => {
   
   ];
 
+  
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const email = e.target[1].value
     const username = e.target[0].value
     const password = e.target[2].value
@@ -69,11 +77,19 @@ const App = () => {
     axios.post('http://localhost:5000/signup', data)
     .then(response => {
       console.log(response)
+      setStatus('Success')
+      setResponse(response.data.message)
+      setIsLoading(false);
     })
     .catch(error => {
       console.log(error)
       console.log(error.response.data.message);
+      setStatus('error')
+      setError(error.response.data.message)
+      setIsLoading(false)
     });
+    // setIsLoading(false)
+    console.log(resp)
   
     
   };
@@ -95,10 +111,12 @@ const App = () => {
             onChange={onChange}
           />
         ))}
-        <button>Sign up</button>
+        <button disabled={isLoading}>{isLoading ? 'Loading...' : 'Signup'}</button>
         <p className="mt-3">Already have an account?<h>Login</h></p>
      
       </form>
+      {status === 'Success' && <div>{resp}</div>}
+      {status === 'error' && <div>{err}</div>}
       
 
     </div>
